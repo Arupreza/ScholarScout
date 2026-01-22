@@ -33,7 +33,7 @@ The system uses OpenAI's GPT-4o to intelligently parse author sections and prese
 - **Progress Tracking**: Real-time progress bars with failed paper reporting
 - **CSV Export**: Clean, structured output for immediate analysis
 - **Error Resilience**: Continues processing even when individual papers fail
-- **Cost Efficient**: ~$1-3 for 100 papers using GPT-4o
+- **Cost Efficient**: ~$-0.4-1 for 100 papers using GPT-4o
 
 ## 🚀 Quick Start
 
