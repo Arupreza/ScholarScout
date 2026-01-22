@@ -1,18 +1,30 @@
-# 📚 Paper Affiliation Extractor: LLM-Powered Academic Data Mining
+# 📚 ScholarScout: Automated Academic Paper Analysis Pipeline
 
 ![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
 ![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4o-412991.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 ![Status](https://img.shields.io/badge/Status-Active-success.svg)
 
-A unified LLM-powered system for automated extraction of author affiliations, contact information, and institutional metadata from research papers in bulk. Intelligently processes PDF documents to build structured datasets for academic research, bibliometric analysis, and collaboration mapping.
+A unified pipeline for automated academic research analysis: from paper collection to structured author affiliation extraction. Combines Google Scholar scraping with LLM-powered data mining to build comprehensive datasets for bibliometric analysis, collaboration mapping, and research trend discovery.
 
 ## 🎯 Overview
 
-Automatically processes PDF research papers to extract structured information about authors including names, emails, departments, institutions, and countries. Uses OpenAI's GPT-4o to intelligently parse author sections and preserve author-affiliation mappings even in complex multi-author papers.
+ScholarScout provides an end-to-end solution for academic research analysis:
+
+1. **Paper Collection** (`gs_MCP/`): Automated scraping and downloading from Google Scholar
+2. **Data Extraction** (`main.py`): LLM-powered extraction of author affiliations and contact information
+3. **Structured Output**: Clean CSV datasets ready for analysis
+
+The system uses OpenAI's GPT-4o to intelligently parse author sections and preserve author-affiliation mappings even in complex multi-author papers.
 
 ## ✨ Features
 
+### Paper Collection (gs_MCP)
+- Automated Google Scholar scraping
+- Bulk PDF download capability
+- Organized storage in Papers directory
+
+### Affiliation Extraction (main.py)
 - **Batch Processing**: Handle 100+ papers automatically
 - **Structured Extraction**: Author names, emails, departments, institutions, countries
 - **Smart Mapping**: Preserves author-affiliation relationships (handles superscript notation)
@@ -27,8 +39,8 @@ Automatically processes PDF research papers to extract structured information ab
 
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/paper-affiliation-extractor.git
-cd paper-affiliation-extractor
+git clone https://github.com/Arupreza/ScholarScout.git
+cd ScholarScout
 
 # Install dependencies
 pip install -r requirements.txt
@@ -42,23 +54,43 @@ pip install -r requirements.txt
 OPENAI_API_KEY=sk-proj-your-api-key-here
 ```
 
-2. Place your PDF papers in a directory:
+2. Project structure:
 
 ```
-/home/user/Papers/
-├── paper1.pdf
-├── paper2.pdf
-└── paper3.pdf
+ScholarScout/
+├── .venv/                          # Virtual environment
+├── gs_MCP/                         # Google Scholar scraper
+├── Papers/                         # Downloaded PDFs (auto-created)
+├── .env                           # API keys
+├── main.py                        # Affiliation extractor
+├── MCPrun.py                      # MCP runner
+├── papers_affiliations.csv        # Output
+├── README.md
+└── requirements.txt
 ```
 
 ### Usage
 
-```python
-python paper_extractor.py
+#### Full Pipeline
+
+```bash
+# Step 1: Collect papers (using gs_MCP)
+python MCPrun.py
+
+# Step 2: Extract affiliations
+python main.py
+```
+
+#### Affiliation Extraction Only
+
+If you already have PDFs in the `Papers/` directory:
+
+```bash
+python main.py
 ```
 
 The script will:
-1. Scan the directory for PDF files
+1. Scan the `Papers/` directory for PDF files
 2. Extract text from first 3 pages (where author info typically appears)
 3. Use GPT-4o to parse and structure author information
 4. Save results to `papers_affiliations.csv`
@@ -66,12 +98,12 @@ The script will:
 ### Custom Configuration
 
 ```python
-from paper_extractor import PaperAffilationExtractor
+from main import PaperAffilationExtractor
 
 extractor = PaperAffilationExtractor(api_key="your-key", model="gpt-4o")
 
 df = extractor.process_papers(
-    papers_dir="/your/papers/directory",
+    papers_dir="./Papers",
     output_csv="custom_output.csv"
 )
 ```
@@ -118,6 +150,10 @@ Niki Parmar,nikip@google.com,Google Research,Google,USA,attention_is_all_you_nee
 ### Architecture
 
 ```
+Google Scholar → gs_MCP → Papers/ → main.py → CSV
+  (Scraping)    (Download)  (PDFs)  (Extract) (Output)
+
+Extraction Pipeline:
 PDF File → Text Extraction → LLM Processing → JSON Parsing → DataFrame → CSV
            (PyPDF2)         (GPT-4o API)      (Validation)   (Pandas)
 ```
@@ -133,7 +169,7 @@ PDF File → Text Extraction → LLM Processing → JSON Parsing → DataFrame �
 
 Default: 0.5s delay between requests (120 papers/hour)
 
-Adjust in code:
+Adjust in `main.py`:
 ```python
 time.sleep(0.5)  # Increase for lower tier limits
 ```
@@ -156,27 +192,62 @@ time.sleep(0.5)  # Increase for lower tier limits
 **Problem**: Not all authors have emails listed  
 **Expected**: Common in academic papers (only corresponding author)
 
+### gs_MCP connection issues
+**Problem**: Google Scholar blocking requests  
+**Solution**: Implement rate limiting, use proxies, or rotate user agents
+
 ## 🚧 Roadmap
 
+### Extraction Module
 - [ ] Retry logic with exponential backoff
 - [ ] Parallel processing with rate limit semaphore
 - [ ] OCR support for image-based PDFs
 - [ ] Email validation and normalization
 - [ ] Institution name standardization
 - [ ] Checkpoint saving for large batches (1000+ papers)
-- [ ] Support for arXiv, PubMed, and other repositories
-- [ ] Interactive CLI with paper preview
+
+### Collection Module
+- [ ] Support for arXiv, PubMed, IEEE Xplore
+- [ ] Advanced search filters
+- [ ] Duplicate detection
+- [ ] Metadata extraction during download
+
+### Analysis Features
+- [ ] Collaboration network visualization
+- [ ] Geographic distribution mapping
+- [ ] Institution ranking analysis
+- [ ] Citation network building
+
+## 📂 Repository Structure
+
+```
+ScholarScout/
+├── .venv/                     # Virtual environment
+├── gs_MCP/                    # Google Scholar MCP server
+│   └── [scraping modules]
+├── Papers/                    # Downloaded PDF papers
+├── .env                       # Environment variables (API keys)
+├── .gitignore                 # Git ignore rules
+├── .python-version            # Python version specification
+├── main.py                    # Main affiliation extractor
+├── MCPrun.py                  # MCP runner script
+├── papers_affiliations.csv    # Extracted data output
+├── pyproject.toml             # Project configuration
+├── README.md                  # This file
+├── requirements.txt           # Python dependencies
+└── uv.lock                    # Dependency lock file
+```
 
 ## 📝 Citation
 
 If you use this tool in your research, please cite:
 
 ```bibtex
-@software{paper_affiliation_extractor,
-  title = {Paper Affiliation Extractor: LLM-Powered Academic Data Mining},
-  author = {Your Name},
+@software{scholarscout,
+  title = {ScholarScout: Automated Academic Paper Analysis Pipeline},
+  author = {Arupreza},
   year = {2025},
-  url = {https://github.com/yourusername/paper-affiliation-extractor}
+  url = {https://github.com/Arupreza/ScholarScout}
 }
 ```
 
@@ -188,10 +259,17 @@ MIT License - see [LICENSE](LICENSE) file for details
 
 Contributions welcome! Please open an issue or submit a pull request.
 
+Areas for contribution:
+- Additional paper sources (arXiv, PubMed, etc.)
+- Improved PDF parsing methods
+- Enhanced affiliation normalization
+- Visualization tools
+- Performance optimizations
+
 ## 📧 Contact
 
 For questions or support, open an issue on GitHub.
 
 ---
 
-**Built with**: OpenAI GPT-4o | Python 3.8+ | PyPDF2 | Pandas
+**Built with**: OpenAI GPT-4o | Python 3.8+ | PyPDF2 | Pandas | Google Scholar MCP
