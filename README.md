@@ -21,9 +21,10 @@ The system uses OpenAI's GPT-4o to intelligently parse author sections and prese
 
 ### Paper Collection (gs_MCP)
 - Powered by [Google Scholar MCP Server](https://github.com/JackKuo666/Google-Scholar-MCP-Server) by [@JackKuo666](https://github.com/JackKuo666)
-- Automated Google Scholar scraping via MCP protocol
-- Bulk PDF download capability
-- Organized storage in Papers directory
+- MCP protocol-based communication for AI-powered paper search
+- Async client for Google Scholar queries
+- Automatic PDF download to Papers directory
+- Customizable search topics via `MCPrun.py`
 
 ### Affiliation Extraction (main.py)
 - **Batch Processing**: Handle 100+ papers automatically
@@ -75,12 +76,14 @@ ScholarScout/
 #### Full Pipeline
 
 ```bash
-# Step 1: Collect papers (using gs_MCP)
+# Step 1: Collect papers using MCP (Google Scholar search)
 python MCPrun.py
 
-# Step 2: Extract affiliations
+# Step 2: Extract affiliations from downloaded papers
 python main.py
 ```
+
+**Note**: `MCPrun.py` connects to the Google Scholar MCP Server to search and download papers based on your research query. Edit the `test_topic` variable in `MCPrun.py` to customize your search.
 
 #### Affiliation Extraction Only
 
@@ -151,13 +154,28 @@ Niki Parmar,nikip@google.com,Google Research,Google,USA,attention_is_all_you_nee
 ### Architecture
 
 ```
-Google Scholar → Google Scholar MCP Server → Papers/ → main.py → CSV
-  (Source)       (JackKuo666/gs_MCP)        (PDFs)  (Extract) (Output)
+User Query → MCPrun.py → Google Scholar MCP Server → Papers/ → main.py → CSV
+  (Topic)   (MCP Client)  (JackKuo666 Server)     (PDFs)  (Extract) (Output)
+
+MCP Communication Flow:
+MCPrun.py (async client) ←→ stdio ←→ google_scholar_server.py (MCP tools)
+                                      ↓
+                                  Google Scholar API
+                                      ↓
+                                  PDF Downloads
 
 Extraction Pipeline:
 PDF File → Text Extraction → LLM Processing → JSON Parsing → DataFrame → CSV
            (PyPDF2)         (GPT-4o API)      (Validation)   (Pandas)
 ```
+
+### MCP Protocol Details
+
+- **Client**: `MCPrun.py` uses `mcp` library with `stdio_client`
+- **Server**: `gs_MCP/google_scholar_server.py` runs via `uv`
+- **Transport**: Standard I/O communication
+- **Tools**: Dynamic tool discovery and invocation
+- **Search Args**: `query` parameter for research topics
 
 ### LLM Prompt Strategy
 
@@ -194,8 +212,12 @@ time.sleep(0.5)  # Increase for lower tier limits
 **Expected**: Common in academic papers (only corresponding author)
 
 ### gs_MCP connection issues
-**Problem**: Google Scholar blocking requests  
-**Solution**: Implement rate limiting, use proxies, or rotate user agents
+**Problem**: MCP server not starting or connection timeout  
+**Solution**: 
+- Ensure `uv` is installed: `pip install uv`
+- Check `gs_MCP/google_scholar_server.py` exists
+- Verify MCP dependencies: `pip install mcp`
+- Test server manually: `cd gs_MCP && uv run google_scholar_server.py`
 
 ## 🚧 Roadmap
 
@@ -223,20 +245,25 @@ time.sleep(0.5)  # Increase for lower tier limits
 
 ```
 ScholarScout/
-├── .venv/                     # Virtual environment
-├── gs_MCP/                    # Google Scholar MCP server
-│   └── [scraping modules]
-├── Papers/                    # Downloaded PDF papers
-├── .env                       # Environment variables (API keys)
-├── .gitignore                 # Git ignore rules
-├── .python-version            # Python version specification
-├── main.py                    # Main affiliation extractor
-├── MCPrun.py                  # MCP runner script
-├── papers_affiliations.csv    # Extracted data output
-├── pyproject.toml             # Project configuration
-├── README.md                  # This file
-├── requirements.txt           # Python dependencies
-└── uv.lock                    # Dependency lock file
+├── .venv/                          # Virtual environment
+├── gs_MCP/                         # Google Scholar MCP server module
+│   ├── __pycache__/
+│   ├── .python-version
+│   ├── google_scholar_server.py    # MCP server implementation
+│   ├── google_scholar_web_search.py # Web scraping logic
+│   └── requirements.txt            # MCP server dependencies
+├── Papers/                         # Downloaded PDF papers (auto-created)
+├── src/                            # Source directory
+├── .env                            # Environment variables (API keys)
+├── .gitignore                      # Git ignore rules
+├── .python-version                 # Python version specification
+├── main.py                         # Main affiliation extractor
+├── MCPrun.py                       # MCP client for paper collection
+├── papers_affiliations.csv         # Extracted data output
+├── pyproject.toml                  # Project configuration (uv)
+├── README.md                       # This file
+├── requirements.txt                # Python dependencies
+└── uv.lock                         # UV dependency lock file
 ```
 
 ## 📝 Citation
