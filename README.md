@@ -9,7 +9,7 @@ A unified pipeline for automated academic research analysis: from paper collecti
 
 ## 🎯 Overview
 
-ScholarScout provides an end-to-end solution for academic research analysis:
+ScholarScout provides an end-to-end solution for academic research affiliation collector:
 
 1. **Paper Collection** (`gs_MCP/`): Automated scraping and downloading from Google Scholar
 2. **Data Extraction** (`main.py`): LLM-powered extraction of author affiliations and contact information
