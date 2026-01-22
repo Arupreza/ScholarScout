@@ -118,12 +118,12 @@ Generated CSV with the following structure:
 
 | Column | Description | Example |
 |--------|-------------|---------|
-| `author_name` | Full name of the author | John Doe |
-| `email` | Email address (if available) | john.doe@mit.edu |
-| `department` | Department or division | Department of Computer Science |
-| `institution` | University or organization | Massachusetts Institute of Technology |
-| `country` | Country of affiliation | USA |
-| `paper_name` | Source paper filename | transformers_attention_2017 |
+| `author_name` | Full name of the author | Md Rezanur Islam |
+| `email` | Email address (if available) | arupreza@sch.ac.kr |
+| `department` | Department or division | Department of Software Convergence |
+| `institution` | University or organization | Soonchunhyang University |
+| `country` | Country of affiliation | Korea |
+| `paper_name` | Source paper filename | CF-AIDS |
 
 ### Sample Output
 
