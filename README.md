@@ -1,4 +1,4 @@
-# 📚 ScholarScout: Automated Academic Paper Analysis Pipeline
+# 📚 ScholarScout: Automated Academic Paper Affiliation Collector
 
 ![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
 ![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4o-412991.svg)
