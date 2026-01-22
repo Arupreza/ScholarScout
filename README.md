@@ -20,7 +20,8 @@ The system uses OpenAI's GPT-4o to intelligently parse author sections and prese
 ## ✨ Features
 
 ### Paper Collection (gs_MCP)
-- Automated Google Scholar scraping
+- Powered by [Google Scholar MCP Server](https://github.com/JackKuo666/Google-Scholar-MCP-Server) by [@JackKuo666](https://github.com/JackKuo666)
+- Automated Google Scholar scraping via MCP protocol
 - Bulk PDF download capability
 - Organized storage in Papers directory
 
@@ -150,8 +151,8 @@ Niki Parmar,nikip@google.com,Google Research,Google,USA,attention_is_all_you_nee
 ### Architecture
 
 ```
-Google Scholar → gs_MCP → Papers/ → main.py → CSV
-  (Scraping)    (Download)  (PDFs)  (Extract) (Output)
+Google Scholar → Google Scholar MCP Server → Papers/ → main.py → CSV
+  (Source)       (JackKuo666/gs_MCP)        (PDFs)  (Extract) (Output)
 
 Extraction Pipeline:
 PDF File → Text Extraction → LLM Processing → JSON Parsing → DataFrame → CSV
@@ -272,4 +273,8 @@ For questions or support, open an issue on GitHub.
 
 ---
 
-**Built with**: OpenAI GPT-4o | Python 3.8+ | PyPDF2 | Pandas | Google Scholar MCP
+**Built with**: OpenAI GPT-4o | Python 3.8+ | PyPDF2 | Pandas | [Google Scholar MCP Server](https://github.com/JackKuo666/Google-Scholar-MCP-Server)
+
+## 🙏 Acknowledgments
+
+This project uses the [Google Scholar MCP Server](https://github.com/JackKuo666/Google-Scholar-MCP-Server) by [@JackKuo666](https://github.com/JackKuo666) for paper collection and metadata retrieval. Special thanks to the MCP community for enabling seamless AI-powered research tools.
