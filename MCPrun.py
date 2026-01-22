@@ -33,7 +33,7 @@ async def perform_test_search():
 
                 # 3. Perform the actual search based on your Special Issue
                 # Adjust 'query' to match the argument name found in your server (usually 'query' or 'name')
-                test_topic = "Security and Privacy in Connected and Autonomous Vehicles"
+                test_topic = "Legal, regulatory, and standardization efforts for CAV security."
                 
                 try:
                     # We try common argument patterns
